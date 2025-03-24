@@ -1,8 +1,14 @@
 package com.data_science.snproject.controllers;
 
+import com.data_science.snproject.configs.UserConfigProperties;
 import com.data_science.snproject.exceptions.NotFoundException;
 import com.data_science.snproject.models.User;
+import com.data_science.snproject.models.dtos.RoleCreate;
+import com.data_science.snproject.models.dtos.UserCreate;
 import com.data_science.snproject.services.UserService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,19 +17,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
+    private final UserConfigProperties userConfigProperties;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserConfigProperties userConfigProperties) {
         this.userService = userService;
+        this.userConfigProperties = userConfigProperties;
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody UserCreate user) {
+        log.info("Creating user: {}", user);
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
@@ -59,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/roles")
-    public ResponseEntity<User> addRoleToUser(@PathVariable UUID userId, @RequestBody User.Role role) {
+    public ResponseEntity<User> addRoleToUser(@PathVariable UUID userId, @RequestBody RoleCreate role) {
         User updatedUser = userService.addRoleToUser(userId, role);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
