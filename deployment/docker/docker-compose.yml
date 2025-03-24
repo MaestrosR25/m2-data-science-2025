@@ -28,32 +28,30 @@ services:
     networks:
       - sn-project
 
-  # backend-server:
-  #   image: fsentinelle/backend-server:latest
-  #   build:
-  #     context: ./../../src/backend
-  #     dockerfile: Dockerfile
-  #   container_name: backend-server
-  #   depends_on:
-  #     - mongodb
-  #   networks:
-  #     - sn-project
-  #   volumes:
-  #     - ./../../src/backend:/app
-  #   ports:
-  #     - "8083:8080"
+  backend-server:
+    build:
+      context: ./../../src/backend
+      dockerfile: Dockerfile
+    container_name: backend-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - mongodb
+    networks:
+      - sn-project
+    volumes:
+      - ./../../src/backend:/app
+    ports:
+      - "8083:8080"
 
-  # frontend-server:
-  #   image: fsentinelle/frontend-server:latest
-  #   build:
-  #     context: ./../../src/frontend
-  #     dockerfile: Dockerfile
-  #   container_name: frontend-server
-  #   depends_on:
-  #     - backend-server
-  #   networks:
-  #     - sn-project
-  #   volumes:
-  #     - ./../../src/frontend:/app
-  #   ports:
-  #     - "3000:3000"
+  frontend-server:
+    build:
+      context: ./../../src/frontend
+      dockerfile: Dockerfile
+    container_name: frontend-server
+    depends_on:
+      - backend-server
+    networks:
+      - sn-project
+    ports:
+      - "3000:80"
